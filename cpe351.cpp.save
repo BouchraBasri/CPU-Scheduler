@@ -1,25 +1,29 @@
 #include <iostream>
 using namespace std;
  
- struct process{
+struct process
+{
     double burstTime;
     double arrivalTime;
     double priority;
-    struct process* next;
+    struct process *next;
 };
 
 int firstMenu(string , string );
 int secondMenu();
-struct process* createnode (double, double, double);
-struct process* insertProcess(struct process*, double, double, double);
-void FCFS(struct process*);
+struct process * createnode (double, double, double);
+int list_is_empty(struct process *);
+struct process * insertProcess(struct process *, double, double, double);
+struct node * sortArrivalTime(struct process *);
+void FCFS(struct process *);
 
 int main()
 {
 
 }
 
-int firstMenu(string schMode, string preMode ) {
+int firstMenu(string schMode, string preMode ) 
+{
     int firstChoice;
     cout << "CPU Scheduler Simulator" << endl;
     cout << "1) Scheduling Method (" << schMode << ")" << endl;
@@ -31,7 +35,8 @@ int firstMenu(string schMode, string preMode ) {
     return firstChoice;
 }
 
-int secondMenu(){
+int secondMenu()
+{
     int secondChoice;
     cout << "CPU Scheduler Simulator MODE" << endl;
     cout << "1) None " << endl;
@@ -44,21 +49,30 @@ int secondMenu(){
     return secondChoice;
 }
 
-struct process* createnode (double bTime, double aTime, double pTime)
+struct process * createnode (double bTime, double aTime, double pTime)
 {
-    struct process* newnode;
-    newnode = (struct process *) malloc(sizeof(process));
-    newnode->burstTime = bTime;
-    newnode->arrivalTime = aTime;
-    newnode->priority = pTime;
-    newnode->next = NULL;
-    return newnode;
+    struct process * temp;
+    temp = (struct process *) malloc(sizeof(process));
+    temp->burstTime = bTime;
+    temp->arrivalTime = aTime;
+    temp->priority = pTime;
+    temp->next = NULL;
+    return temp;
 }
 
-struct process* insertProcess(struct process* processList, double bTime, double aTime, double pTime)
+int list_is_empty(struct process * processList)
 {
-    struct process* newProcess = createnode(bTime, aTime, pTime);
-    struct process* currentProcess;
+    if (processList == NULL)
+        return 1;
+    else
+        return 0;
+}
+
+
+struct process * insertProcess(struct *processList, double bTime, double aTime, double pTime)
+{
+    struct process * newProcess = createnode(bTime, aTime, pTime);
+    struct process * currentProcess;
     if(processList == NULL)
     {
         processList = newProcess;
@@ -71,7 +85,7 @@ struct process* insertProcess(struct process* processList, double bTime, double 
     return processList;
 }
 
-void FCFS(struct process* processList)
+void FCFS(struct process * processList)
 {
     int waitingTime = 0;
     double avgWaitingTime = 0;
