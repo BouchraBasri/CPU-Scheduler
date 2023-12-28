@@ -8,11 +8,16 @@ using namespace std;
     struct process* next;
 };
 
+int processID = 1;
+double waitingTime = 0;
+double avgWaitingTime = 0;
+
 int firstMenu(string , string );
 int secondMenu();
 struct process* createnode (double, double, double);
 struct process* insertProcess(struct process*, double, double, double);
-void FCFS(struct process*);
+void wTime(struct process*);
+void FCFSOutput(struct process*);
 
 int main()
 {
@@ -71,21 +76,30 @@ struct process* insertProcess(struct process* processList, double bTime, double 
     return processList;
 }
 
-void FCFS(struct process* processList)
+void wTime(struct process * processList)
 {
-    int waitingTime = 0;
-    double avgWaitingTime = 0;
-    int numOfProcess = 0;
+    waitingTime = waitingTime + processList->burstTime;
+}
+
+void FCFSOutput(struct process* processList)
+{
+    cout << "Scheduling Method: First Come First Serve" << endl;
+    cout << "Process Wating Times:" << endl;
     while(processList != NULL)
     {
-        waitingTime += processList->burstTime;
-        processList = processList->next;
-        numOfProcess++ ;
+        cout << "P" << processID << ": " << waitingTime << " ms" << endl;
+        processID++;
+        wTime(processList);
+        processList = processList->next
     }
-    if(numOfProcess != 0)
+    processID = processID - 1;
+    if(processID != 0)
     {
-        avgWaitingTime = waitingTime / numOfProcess;
+        avgWaitingTime = waitingTime / processID;
     }
     else
+    {
         avgWaitingTime = 0;
+    }
+    cout << " Average Wainting Time: " << avgWaitingTime << " ms" << endl;
 }
