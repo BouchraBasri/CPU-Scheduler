@@ -11,6 +11,7 @@ using namespace std;
 int processID = 1;
 double waitingTime = 0;
 double avgWaitingTime = 0;
+int quantum = 2;
 
 int firstMenu(string , string );
 int secondMenu();
@@ -18,6 +19,7 @@ struct process* createnode (double, double, double);
 struct process* insertProcess(struct process*, double, double, double);
 void wTime(struct process*);
 void FCFSOutput(struct process*);
+void RoundRobin(struct process*);
 
 int main()
 {
@@ -103,3 +105,16 @@ void FCFSOutput(struct process* processList)
     }
     cout << " Average Wainting Time: " << avgWaitingTime << " ms" << endl;
 }
+
+void RoundRobin(struct process* processList) 
+{
+    if(processList->burstTime >= quantum)
+    {
+        waitingTime = quantum;
+    }
+    else
+    {
+        waitingTime = processList->burstTime;
+    }
+}
+
