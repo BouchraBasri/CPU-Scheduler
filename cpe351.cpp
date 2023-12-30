@@ -86,7 +86,7 @@ void wTime(struct process * processList)
 void FCFSOutput(struct process* processList)
 {
     cout << "Scheduling Method: First Come First Serve" << endl;
-    cout << "Process Wating Times:" << endl;
+    cout << "Process Waiting Time:" << endl;
     while(processList != NULL)
     {
         cout << "P" << processID << ": " << waitingTime << " ms" << endl;
@@ -108,13 +108,19 @@ void FCFSOutput(struct process* processList)
 
 void RoundRobin(struct process* processList) 
 {
-    if(processList->burstTime >= quantum)
+    while (processList != NULL)
     {
-        waitingTime = quantum;
-    }
-    else
-    {
-        waitingTime = processList->burstTime;
+        if(processList->burstTime >= quantum)
+        {
+        waitingTime = waitingTime + quantum;
+        processList->burstTime = processList->burstTime - quantum;
+        }
+        else
+        {
+        waitingTime = waitingTime + processList->burstTime;
+        processList->burstTime = 0;
+        }
+        processList = processList->next;
     }
 }
-
+  
