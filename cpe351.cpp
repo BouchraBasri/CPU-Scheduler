@@ -15,9 +15,8 @@ int quantum = 2;
 
 int firstMenu(string , string );
 int secondMenu();
-struct process* createnode (double, double, double);
+struct process* createProcess(double, double, double);
 struct process* insertProcess(struct process*, double, double, double);
-void wTime(struct process*);
 void FCFSOutput(struct process*);
 void RoundRobin(struct process*);
 
@@ -26,7 +25,7 @@ int main()
 
 }
 
-int firstMenu(string schMode, string preMode ) {
+int firstMenu(string schMode, string preMode){ //The function displays the menu options and waits for user input.
     int firstChoice;
     cout << "CPU Scheduler Simulator" << endl;
     cout << "1) Scheduling Method (" << schMode << ")" << endl;
@@ -38,7 +37,8 @@ int firstMenu(string schMode, string preMode ) {
     return firstChoice;
 }
 
-int secondMenu(){
+int secondMenu() //The function displays the menu options and waits for user to choose scheduler simulator.
+{
     int secondChoice;
     cout << "CPU Scheduler Simulator MODE" << endl;
     cout << "1) None " << endl;
@@ -51,21 +51,20 @@ int secondMenu(){
     return secondChoice;
 }
 
-struct process* createnode (double bTime, double aTime, double pTime)
+struct process* createProcess (double bTime, double aTime, double pTime)
 {
-    struct process* newnode;
-    newnode = (struct process *) malloc(sizeof(process));
-    newnode->burstTime = bTime;
-    newnode->arrivalTime = aTime;
-    newnode->priority = pTime;
-    newnode->next = NULL;
-    return newnode;
+    struct process* newProcess;
+    newProcess = (struct process *) malloc(sizeof(process));
+    newProcess->burstTime = bTime;
+    newProcess->arrivalTime = aTime;
+    newProcess->priority = pTime;
+    newProcess->next = NULL;
+    return newProcess;
 }
 
-struct process* insertProcess(struct process* processList, double bTime, double aTime, double pTime)
+struct process* insertProcess(struct process* processList, struct process* newProcess)
 {
-    struct process* newProcess = createnode(bTime, aTime, pTime);
-    struct process* currentProcess;
+    struct process* currentProcess
     if(processList == NULL)
     {
         processList = newProcess;
@@ -78,20 +77,19 @@ struct process* insertProcess(struct process* processList, double bTime, double 
     return processList;
 }
 
-void wTime(struct process * processList)
-{
-    waitingTime = waitingTime + processList->burstTime;
-}
-
 void FCFSOutput(struct process* processList)
 {
-    cout << "Scheduling Method: First Come First Serve" << endl;
+    double cTime = 0;
+    double turn_around_time = 0;
+    cout << "Scheduling Method: First Come First Served" << endl;
     cout << "Process Waiting Time:" << endl;
     while(processList != NULL)
     {
         cout << "P" << processID << ": " << waitingTime << " ms" << endl;
         processID++;
-        wTime(processList);
+        cTime = cTime + processList->burstTime;
+        turn_around_time = cTime - processList->arrivalTime;
+        waitingTime = turn_around_time - processList->burstTime;
         processList = processList->next
     }
     processID = processID - 1;
@@ -103,7 +101,7 @@ void FCFSOutput(struct process* processList)
     {
         avgWaitingTime = 0;
     }
-    cout << " Average Wainting Time: " << avgWaitingTime << " ms" << endl;
+    cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
 }
 
 void RoundRobin(struct process* processList) 
@@ -123,4 +121,3 @@ void RoundRobin(struct process* processList)
         processList = processList->next;
     }
 }
-  
