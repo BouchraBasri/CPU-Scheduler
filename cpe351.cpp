@@ -17,6 +17,7 @@ int firstMenu(string ,string );
 int secondMenu();
 struct process* createProcess(double, double, double);
 struct process* insertProcess(struct process*,struct process*);
+struct process* sortArrivalTime(struct process*);
 void FCFSOutput(struct process*);
 void RoundRobin(struct process*);
 
@@ -75,6 +76,41 @@ struct process* insertProcess(struct process* processList, struct process* curre
     currentProcess->next = processList;
     return processList;
 }
+
+struct node * sortArrivalTime(struct process * processList)
+{
+    struct process * newProcess = NULL;
+    double tempbT, tempaT, temppT;
+    if(list_is_empty(processList))
+    {
+        return processList;
+    }
+    else
+    {
+        while(processList != NULL)
+        {
+            while(newProcess != NULL)
+            {
+                if(processList->arrivalTime > newProcess->arrivalTime)
+                {
+                    tempbT = processList->burstTime;
+                    tempaT = processList->arrivalTime;
+                    temppT = processList->priority;
+                    processList->burstTime = newProcess->burstTime;
+                    processList->arrivalTime = newProcess->arrivalTime;
+                    processList->priority = newProcess->priority;
+                    newProcess->burstTime = tempbT;
+                    newProcess->arrivalTime = tempaT;
+                    newProcess->priority = temppT;
+                }
+                newProcess = newProcess->next;
+            }
+            processList = processList->next;
+        }
+    }
+    return processList;
+}
+
 void FCFSOutput(struct process* processList)
 {
     double cTime = 0;

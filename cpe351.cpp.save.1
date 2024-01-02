@@ -1,0 +1,20 @@
+#include <iostream>
+using namespace std;
+ 
+ struct process{
+    double burstTime;
+    double arrivalTime;
+    double priority;
+    struct process* next;
+};
+
+int processID = 1;
+double waitingTime = 0;
+double avgWaitingTime = 0;
+int quantum = 2;
+
+int firstMenu(string ,string );
+int secondMenu();
+struct process* createProcess(double, double, double);
+struct process* insertProcess(struct process*,struct process*);
+ 
