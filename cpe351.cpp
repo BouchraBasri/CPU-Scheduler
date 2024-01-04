@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
  
  struct process{
@@ -23,7 +24,29 @@ void RoundRobin(struct process*);
 
 int main(int argc, char *argv[])
 {
-    
+    FILE *input = fopen(input, "r");
+    FILE *output = fopen(output, "w");
+    struct process* p=NULL;
+    int menu=firstMenu();
+    switch (menu)
+    {
+        case 1:
+            int scheduling_menu=secondMenu();
+            switch (scheduling_menu)
+            {
+                case 1:           
+                    break;
+                case 2:
+                    FCFSOutput(p);
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;    
+                default:
+                    break;
+            }
+    }
 }
 
 int firstMenu(int secondMenu,string schMode, string preMode){ //The function displays the menu options and waits for user input.
