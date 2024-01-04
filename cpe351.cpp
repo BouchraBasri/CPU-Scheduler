@@ -13,7 +13,7 @@ double waitingTime = 0;
 double avgWaitingTime = 0;
 int quantum = 2;
 
-int firstMenu(string ,string );
+int firstMenu(int, string, string );
 int secondMenu();
 struct process* createProcess(double, double, double);
 struct process* insertProcess(struct process*,struct process*);
@@ -21,12 +21,12 @@ struct process* sortArrivalTime(struct process*);
 void FCFSOutput(struct process*);
 void RoundRobin(struct process*);
 
-int main()
+int main(int argc, char *argv[])
 {
-
+    
 }
 
-int firstMenu(string schMode, string preMode){ //The function displays the menu options and waits for user input.
+int firstMenu(int secondMenu,string schMode, string preMode){ //The function displays the menu options and waits for user input.
     int firstChoice;
     cout << "CPU Scheduler Simulator" << endl;
     cout << "1) Scheduling Method (" << schMode << ")" << endl;
@@ -35,6 +35,24 @@ int firstMenu(string schMode, string preMode){ //The function displays the menu 
     cout << "4) End Program" << endl;
     cout << "Option > ";
     cin >> firstChoice;
+
+    switch(secondMenu)
+    {
+        case 2:
+            schMode = "FCFS";
+            break;
+        case 3:
+            schMode = "SJF";
+            break;
+        case 4:
+            schMode = "Priotity";
+            break;
+        case 5:
+            schMode = "Round Robin";
+            break;
+        default:
+            break;
+    }
     return firstChoice;
 }
 
