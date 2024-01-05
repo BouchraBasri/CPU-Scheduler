@@ -2,21 +2,23 @@
 #include <fstream>
 using namespace std;
  
- struct process{
+struct process
+{
+    int ID;
     double burstTime;
     double arrivalTime;
     double priority;
     struct process* next;
 };
 
-int processID = 1;
 double waitingTime = 0;
 double avgWaitingTime = 0;
+int count = 0;
 int quantum = 2;
 
 int firstMenu(int, string, string );
 int secondMenu();
-struct process* createProcess(double, double, double);
+struct process* createProcess(int, double, double, double);
 struct process* insertProcess(struct process*,struct process*);
 struct process* sortArrivalTime(struct process*);
 void FCFSOutput(struct process*);
@@ -93,10 +95,11 @@ int secondMenu() //The function displays the menu options and waits for user to 
     return secondChoice;
 }
 
-struct process* createProcess (double bTime, double aTime, double pTime)
+struct process* createProcess (int processID, double bTime, double aTime, double pTime)
 {
-    struct process* processList;
+    struct process* processList; //processList pointer to the head of the linked list.
     processList = (struct process *) malloc(sizeof(process));
+    processList->processID = processID;
     processList->burstTime = bTime;
     processList->arrivalTime = aTime;
     processList->priority = pTime;
@@ -118,10 +121,11 @@ struct process* insertProcess(struct process* processList, struct process* curre
     return processList;
 }
 
-struct node * sortArrivalTime(struct process * processList)
+struct node * sortArrivalTime(struct process * processList) //This function sorts list based on arrival time of the processes.
 {
     struct process * newProcess = NULL;
     double tempbT, tempaT, temppT;
+    int tempID;
     if(list_is_empty(processList))
     {
         return processList;
@@ -134,12 +138,15 @@ struct node * sortArrivalTime(struct process * processList)
             {
                 if(processList->arrivalTime > newProcess->arrivalTime)
                 {
+                    tempID = processList->ID;
                     tempbT = processList->burstTime;
                     tempaT = processList->arrivalTime;
                     temppT = processList->priority;
+                    processList->ID = newProcess->ID;
                     processList->burstTime = newProcess->burstTime;
                     processList->arrivalTime = newProcess->arrivalTime;
                     processList->priority = newProcess->priority;
+                    newProcess->ID = tempID;
                     newProcess->burstTime = tempbT;
                     newProcess->arrivalTime = tempaT;
                     newProcess->priority = temppT;
@@ -158,19 +165,19 @@ void FCFSOutput(struct process* processList)
     double turn_around_time = 0;
     cout << "Scheduling Method: First Come First Served" << endl;
     cout << "Process Waiting Time:" << endl;
+    processList = sortArrivalTime(processList);
     while(processList != NULL)
     {
-        cout << "P" << processID << ": " << waitingTime << " ms" << endl;
-        processID++;
-        cTime = cTime + processList->burstTime;
+        cout << "P" << processList->ID << ": " << waitingTime << " ms" << endl;
+        cTime += processList->burstTime;
         turn_around_time = cTime - processList->arrivalTime;
-        waitingTime = turn_around_time - processList->burstTime;
-        processList = processList->next
+        waitingTime += turn_around_time - processList->burstTime;
+        processList = processList->next;
+        count++;
     }
-    processID = processID - 1;
-    if(processID != 0)
+    if(count != 0)
     {
-        avgWaitingTime = waitingTime / processID;
+        avgWaitingTime = waitingTime / count;
     }
     else
     {
@@ -181,29 +188,40 @@ void FCFSOutput(struct process* processList)
 
 void RoundRobin(struct process* processList) 
 {
-    double executionTime = 0;
+    double executionTime = 0; // Variable to keep track of the total execution time.
     cout << "Scheduling Method: Round Robin" << endl;
     cout << "Process Waiting Time:" << endl;
+    processList = sortArrivalTime(processList);
     while (processList != NULL)
     {
-        cout << "P" << processID << ": " << waitingTime << " ms" << endl;
-        processID++;
+        cout << "P" << processList->ID << ": " << waitingTime << " ms" << endl;
         if (processList->burstTime >= quantum)
         {
-            executionTime += quantum;
+            executionTime = quantum; // Execute for the quantum time if the burst time is greater than or equal to the quantum.
         }
         else
         {
-            executionTime += processList->burstTime;
+            executionTime = processList->burstTime; // Execute for the remaining burst time if it's less than the quantum.
         }
-        processList->burstTime -= executionTime;
+        processList->burstTime -= executionTime; // Update the burst time of the current process.
+        waitingTime += executionTime;
         if(processList->burstTime > 0)
         {
-            processList = processList->next;
+            processList = processList->next; // Move to the next process if there's more burst time remaining.
         }
         else
         {
-            processList = processList->next;
+            processList = processList->next; // Move to the next process if the current process is completed.
         }
+        count++;
     }
-}
+    if(count != 0)
+    {
+        avgWaitingTime = waitingTime / count; // Calculate average waiting time if there are processes.
+    }
+    else
+    {
+        avgWaitingTime = 0; // Set average to 0 if there are no process.
+    }
+    cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
+} 
