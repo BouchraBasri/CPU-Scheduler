@@ -8,10 +8,11 @@ struct process
     double burstTime;
     double arrivalTime;
     double priority;
+    double waitingTime;
     struct process* next;
 };
 
-double waitingTime = 0;
+double wTime = 0;
 double avgWaitingTime = 0;
 int count = 0;
 int quantum = 2;
@@ -21,8 +22,10 @@ int secondMenu();
 struct process* createProcess(int, double, double, double);
 struct process* insertProcess(struct process*,struct process*);
 struct process* sortArrivalTime(struct process*);
+struct process* sortbyID(struct process*);
 void FCFSOutput(struct process*);
 void RoundRobin(struct process*);
+
 
 int main(int argc, char *argv[])
 {
@@ -95,7 +98,7 @@ int secondMenu() //The function displays the menu options and waits for user to 
     return secondChoice;
 }
 
-struct process* createProcess (int processID, double bTime, double aTime, double pTime)
+struct process* createProcess (int processID, double bTime, double aTime, double pTime, double waitingT)
 {
     struct process* processList; //processList pointer to the head of the linked list.
     processList = (struct process *) malloc(sizeof(process));
@@ -103,6 +106,7 @@ struct process* createProcess (int processID, double bTime, double aTime, double
     processList->burstTime = bTime;
     processList->arrivalTime = aTime;
     processList->priority = pTime;
+    processList->waitingTime = waitingT;
     processList->next = NULL;
     return processList;
 }
@@ -121,7 +125,48 @@ struct process* insertProcess(struct process* processList, struct process* curre
     return processList;
 }
 
-struct node * sortArrivalTime(struct process * processList) //This function sorts list based on arrival time of the processes.
+struct process* sortArrivalTime(struct process * processList) //This function sorts list based on arrival time of the processes.
+{
+    struct process * newProcess = NULL;
+    double tempbT, tempaT, temppT, tempwT;
+    int tempID;
+    if(list_is_empty(processList))
+    {
+        return processList;
+    }
+    else
+    {
+        while(processList != NULL)
+        {
+            while(newProcess != NULL)
+            {
+                if(processList->arrivalTime > newProcess->arrivalTime)
+                {
+                    tempID = processList->ID;
+                    tempbT = processList->burstTime;
+                    tempaT = processList->arrivalTime;
+                    temppT = processList->priority;
+                    tempwT = processList->waitingTime;
+                    processList->ID = newProcess->ID;
+                    processList->burstTime = newProcess->burstTime;
+                    processList->arrivalTime = newProcess->arrivalTime;
+                    processList->priority = newProcess->priority;
+                    processList->waitingTime = newProcess->waitingTime;
+                    newProcess->ID = tempID;
+                    newProcess->burstTime = tempbT;
+                    newProcess->arrivalTime = tempaT;
+                    newProcess->priority = temppT;
+                    newProcess->waitingTime = tempwT;
+                }
+                newProcess = newProcess->next;
+            }
+            processList = processList->next;
+        }
+    }
+    return processList;
+}
+
+struct process* sortbyID(struct process* processList)
 {
     struct process * newProcess = NULL;
     double tempbT, tempaT, temppT;
@@ -136,7 +181,7 @@ struct node * sortArrivalTime(struct process * processList) //This function sort
         {
             while(newProcess != NULL)
             {
-                if(processList->arrivalTime > newProcess->arrivalTime)
+                if(processList->ID > newProcess->ID)
                 {
                     tempID = processList->ID;
                     tempbT = processList->burstTime;
@@ -168,10 +213,10 @@ void FCFSOutput(struct process* processList)
     processList = sortArrivalTime(processList);
     while(processList != NULL)
     {
-        cout << "P" << processList->ID << ": " << waitingTime << " ms" << endl;
+        processList->waitingTime = wTime;
         cTime += processList->burstTime;
         turn_around_time = cTime - processList->arrivalTime;
-        waitingTime += turn_around_time - processList->burstTime;
+        wTime += turn_around_time - processList->burstTime;
         processList = processList->next;
         count++;
     }
@@ -182,6 +227,11 @@ void FCFSOutput(struct process* processList)
     else
     {
         avgWaitingTime = 0;
+    }
+    processList = sortbyID(processList);
+    while(processList != NULL)
+    {
+        cout << "P" << processList->ID << ": " << processList->waitingTime << " ms" << endl;
     }
     cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
 }
@@ -194,7 +244,7 @@ void RoundRobin(struct process* processList)
     processList = sortArrivalTime(processList);
     while (processList != NULL)
     {
-        cout << "P" << processList->ID << ": " << waitingTime << " ms" << endl;
+        processList->waitingTime = wTime;
         if (processList->burstTime >= quantum)
         {
             executionTime = quantum; // Execute for the quantum time if the burst time is greater than or equal to the quantum.
@@ -222,6 +272,11 @@ void RoundRobin(struct process* processList)
     else
     {
         avgWaitingTime = 0; // Set average to 0 if there are no process.
+    }
+    processList = sortbyID(processList); 
+    while (processList != NULL)
+    {
+        cout << "P" << processList->ID << ": " << processList->waitingTime << " ms" << endl;
     }
     cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
 } 
