@@ -17,7 +17,7 @@ double avgWaitingTime = 0;
 int count = 0;
 int quantum = 2;
 
-int firstMenu(int, string, string );
+int firstMenu(int);
 int secondMenu();
 struct process* createProcess(int, double, double, double);
 struct process* insertProcess(struct process*,struct process*);
@@ -25,7 +25,7 @@ struct process* sortArrivalTime(struct process*);
 struct process* sortbyID(struct process*);
 void FCFSOutput(struct process*);
 void RoundRobin(struct process*);
-
+void showresult(int);
 
 int main(int argc, char *argv[])
 {
@@ -54,8 +54,10 @@ int main(int argc, char *argv[])
     }
 }
 
-int firstMenu(int secondMenu,string schMode, string preMode){ //The function displays the menu options and waits for user input.
+int firstMenu(int secondChoice) //The function displays the menu options and waits for user input.
+{
     int firstChoice;
+    string schMode, preMode;
     cout << "CPU Scheduler Simulator" << endl;
     cout << "1) Scheduling Method (" << schMode << ")" << endl;
     cout << "2) Preemptive Mode (" << preMode << ")" << endl;
@@ -64,7 +66,7 @@ int firstMenu(int secondMenu,string schMode, string preMode){ //The function dis
     cout << "Option > ";
     cin >> firstChoice;
 
-    switch(secondMenu)
+    switch(secondChoice)
     {
         case 2:
             schMode = "FCFS";
@@ -275,6 +277,17 @@ void RoundRobin(struct process* processList)
     }
     processList = sortbyID(processList); 
     while (processList != NULL)
+    {
+        cout << "P" << processList->ID << ": " << processList->waitingTime << " ms" << endl;
+    }
+    cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
+}
+
+void showresult(string schMode, struct process* processList)
+{
+    cout << "Scheduling Method: " << schMode << endl;
+    cout << "Process Waiting Times:" << endl;
+    while(processList != NULL)
     {
         cout << "P" << processList->ID << ": " << processList->waitingTime << " ms" << endl;
     }
