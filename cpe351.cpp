@@ -21,6 +21,7 @@ struct process* sortBurstTime(struct process*);
 struct process* sortpriority(struct process*);
 void FCFS(struct process*);
 void SJF_NP(struct process*);
+void priority_NP(struct process*);
 
 int main()
 {
@@ -236,6 +237,57 @@ void SJF_NP(struct process* processHeader)
             wTime = turn_around_time - processHeader->burstTime;
             cout << "P" << processHeader->ID << ": " << wTime << " ms" << endl;
             avgWaitingTime += wTime;
+        }
+        processHeader = processHeader->next;
+        count++;
+    }
+    if(count != 0)
+    {
+        avgWaitingTime = avgWaitingTime / count;
+    }
+    else
+    {
+        avgWaitingTime = 0; // List is empty.
+    }
+    cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
+}
+
+void priority_NP(struct process* processHeader)
+{
+    int completionTime = 0;
+    int turn_around_time = 0;
+    cout << "Scheduling Method: Priority Scheduling - Non Preemptive" << endl;
+    cout << "Process Waiting Time:" << endl;
+    processHeader = sortArrivalTime(processHeader);
+    while(processHeader != NULL)
+    {
+        completionTime += processHeader->burstTime; // Adding the burst time of each process that has finished. 
+        turn_around_time = completionTime - processHeader->arrivalTime; 
+        wTime = turn_around_time - processHeader->burstTime;
+        cout << "P" << processHeader->ID << ": " << wTime << " ms" << endl;
+        avgWaitingTime += wTime;
+        processHeader = processHeader->next;
+        count++;
+        break;
+    }
+    processHeader = sortpriority(processHeader);
+    while(processHeader != NULL)
+    {
+        if(processHeader->next != NULL)
+        {
+                completionTime += processHeader->burstTime;
+                turn_around_time = completionTime - processHeader->arrivalTime;
+                wTime = turn_around_time - processHeader->burstTime;
+                cout << "P" << processHeader->ID << ": " << wTime << " ms" << endl;
+                avgWaitingTime += wTime;
+        }
+        else if(processHeader->next == NULL)
+        {
+                completionTime += processHeader->burstTime;
+                turn_around_time = completionTime - processHeader->arrivalTime;
+                wTime = turn_around_time - processHeader->burstTime;
+                cout << "P" << processHeader->ID << ": " << wTime << " ms" << endl;
+                avgWaitingTime += wTime;
         }
         processHeader = processHeader->next;
         count++;
