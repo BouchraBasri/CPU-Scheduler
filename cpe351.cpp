@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
 struct process
@@ -12,6 +13,8 @@ struct process
 
 struct process* createProcess(int, double, double, double);
 struct process* insertProcess(struct process*, int, double, double, double);
+int MainMenu(string, string);
+int SchedulingMenu();
 void swap(struct process*, struct process*);
 struct process* sortArrivalTime(struct process*);
 struct process* sortBurstTime(struct process*);
@@ -49,6 +52,33 @@ struct process* insertProcess(struct process* processHeader, int process_id, dou
         currentProcess = currentProcess->next;
     currentProcess->next = newProcess;
     return processHeader;
+}
+
+int MainMenu(string schedulingMethod, string preemptiveMode)
+{
+    int Choice;
+    cout << "CPU Scheduler Simulator" << endl;
+    cout << "1) Scheduling Method ("<< schedulingMethod <<")" << endl;
+    cout << "2) Preemptive Mode ("<< preemptiveMode <<")" << endl;
+    cout << "3) Show Result" << endl;
+    cout << "4) End Program" << endl;
+    cout << "Option > ";
+    cin >> Choice;
+    return Choice;
+}
+
+int SchedulingMenu() //The function displays the menu options and waits for user to choose scheduler simulator.
+{
+    int schedulingMethod;
+    cout << "CPU Scheduler Simulator MODE" << endl;
+    cout << "1) None " << endl;
+    cout << "2) First Come First Serve Scheduler " << endl;
+    cout << "3) Shortest-Job-First Scheduler" << endl;
+    cout << "4) Priority Scheduler" << endl;
+    cout << "5) Round Robin Scheduling" << endl;
+    cout << "Option > ";
+    cin >> schedulingMethod;
+    return schedulingMethod;
 }
 
 void swap(struct process* processHeader, struct process* nextProcess)
