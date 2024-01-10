@@ -16,6 +16,7 @@ void swap(struct process*, struct process*);
 struct process* sortArrivalTime(struct process*);
 struct process* sortBurstTime(struct process*);
 struct process* sortpriority(struct process*);
+void FCFS(struct process*);
 
 int main()
 {
@@ -138,4 +139,32 @@ struct process* sortpriority(struct process* processHeader)
         }
     }while(swapped);
     return processHeader;
+}
+
+void FCFS(struct process* processHeader)
+{
+    double completionTime = 0; 
+    double turn_around_time = 0;
+    cout << "Scheduling Method: First Come First Served" << endl;
+    cout << "Process Waiting Time:" << endl;
+    processHeader = sortArrivalTime(processHeader);
+    while(processHeader != NULL)
+    {
+        completionTime += processHeader->burstTime; // Adding the burst time of each process that has finished. 
+        turn_around_time = completionTime - processHeader->arrivalTime; 
+        wTime = turn_around_time - processHeader->burstTime;
+        cout << "P" << processHeader->ID << ": " << wTime << " ms" << endl;
+        avgWaitingTime += wTime;
+        processHeader = processHeader->next;
+        count++; // This variable calculate the number of processes in the list.
+    }
+    if(count != 0)
+    {
+        avgWaitingTime = avgWaitingTime / count;
+    }
+    else
+    {
+        avgWaitingTime = 0; // List is empty.
+    }
+    cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
 } 
