@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#define LINE_MAX 1024
 using namespace std;
 
 struct process
@@ -64,7 +65,91 @@ int main()
         p = insertProcess(p, x, i[0], i[1], i[2]);
         x++;
     }
-    
+    string schMethod, preMode;
+    int menu, scheduling_menu, mode;
+    do{
+        menu = MainMenu(schMethod, preMode);
+        switch(menu)
+        {
+            case 1:
+                scheduling_menu = SchedulingMenu();
+                switch(scheduling_menu)
+                {
+                    case 1:
+                        schMethod = "None";
+                        break;
+                    case 2:
+                        schMethod = "FCFS";
+                        break;
+                    case 3:
+                        schMethod = "SJF";
+                        break;
+                    case 4:
+                        schMethod = "Priority";
+                        break;
+                    case 5:
+                        schMethod = "Round Robin";
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 2:
+                mode = preemptive_mode();
+                switch(mode)
+                {
+                    case 1:
+                        if(schMethod == "Round Robin")
+                        {
+                            cout << "Round Robin is preemptive." << endl;
+                            preMode = "On";
+                        }
+                        else
+                        {
+                            preMode = "Off";
+                        }
+                        break;
+                    case 2:
+                        if(schMethod == "FCFS")
+                        {
+                            cout << "First Come First Serve is non preemptive." << endl;
+                            preMode = "Off";
+                        }
+                        else
+                        {
+                            preMode = "On";
+                        }
+                        break;
+                }
+                break;
+            case 3:
+                if(schMethod == "FCFS")
+                {
+                    FCFS(p);
+                }
+                else if(schMethod == "SJF" && preMode == "Off")
+                {
+                    SJF_NP(p);
+                }
+                else if(schMethod == "SJF" && preMode == "On")
+                {
+                    cout << "This function is not implemented yet.";
+                }
+                else if(schMethod == "Priority" && preMode == "Off")
+                {
+                    priority_NP(p);
+                }
+                else if(schMethod == "Priority" && preMode == "On")
+                {
+                    cout << "This function is not implemented yet.";
+                }
+                else if(schMethod == "Round Robin")
+                {
+                    cout << "This function is not implemented yet.";
+                }
+                break;
+        }
+    }while(menu < 4);
 
     return 0;
 }
