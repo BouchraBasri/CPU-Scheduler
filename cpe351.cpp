@@ -11,6 +11,10 @@ struct process
     struct process* next;
 };
 
+double wTime = 0;
+double avgWaitingTime = 0;
+int count = 0;
+
 struct process* createProcess(int, double, double, double);
 struct process* insertProcess(struct process*, int, double, double, double);
 int MainMenu(string, string);
@@ -22,9 +26,44 @@ struct process* sortpriority(struct process*);
 void FCFS(struct process*);
 void SJF_NP(struct process*);
 void priority_NP(struct process*);
+int size(struct process*);
 
 int main()
 {
+    if(argc!=5){
+        cout << "Invalid number of arguments." << endl;
+        return 1;
+    }
+
+    FILE *input=fopen(argv[2],"r");
+    if(input == NULL)
+    {
+        cout << "Cannot open input.txt ." << endl;
+        return 1;
+    }
+
+    FILE *output=fopen(argv[4],"w");
+    if(output == NULL)
+    {
+        cout << "Cannot open output.txt ." << endl;
+        fclose(input);
+        return 1;
+    }
+    
+    struct process* p=NULL;
+    char line[LINE_MAX];
+    int x = size(p);
+
+    while (fgets(line, LINE_MAX, input) != NULL)
+    {
+        int i[3];
+        char colon;
+        istringstream iss(line);
+        iss >> i[0] >> colon >> i[1] >> colon >> i[2];
+
+        p = insertProcess(p, x, i[0], i[1], i[2]);
+        x++;
+    }
     
 
     return 0;
@@ -301,4 +340,15 @@ void priority_NP(struct process* processHeader)
         avgWaitingTime = 0; // List is empty.
     }
     cout << " Average Waiting Time: " << avgWaitingTime << " ms" << endl;
+}
+
+int size(struct process *processHeader)
+{
+	int x=1;
+	while(processHeader!=NULL)
+	{
+		x++;
+		processHeader = processHeader->next;
+	}
+	return x;	
 } 
