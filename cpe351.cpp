@@ -205,6 +205,7 @@ void push(struct stack *ps, int x)
    if(stackFull(ps))
    {
        cout<<"Overflow"<<endl;
+       exit(1);
    }
    ps->top++;
    ps->item[ps->top]=x;
@@ -215,6 +216,7 @@ double pop(struct stack *ps)
    if(stackEmpty(ps))
    {
        cout<<"Underflow"<<endl;
+       exit(1);
    }
    return ps->item[(ps->top)--];
 }
@@ -526,9 +528,10 @@ void RoundRobin(struct process *processHeader, FILE *output)
     processHeader = sortArrivalTime(processHeader);
     cout<< "Choose quantum:" << endl;
     cin >> quantum;
-    while (processHeader != NULL)
+    struct process *processtemp = processHeader;
+    while (processtemp != NULL)
     {
-        struct process *currentProcess = processHeader;
+        struct process *currentProcess = processtemp;
         int process = 0; 
 
         while (currentProcess != NULL)
@@ -555,8 +558,8 @@ void RoundRobin(struct process *processHeader, FILE *output)
         }
         if (process == 0)
         {
-            struct process *temp = processHeader;
-            processHeader = processHeader->next;
+            struct process *temp = processtemp;
+            processtemp = processtemp->next;
         }
     }
     for(int i=0; i<y-1; i++)
@@ -567,7 +570,7 @@ void RoundRobin(struct process *processHeader, FILE *output)
         processindex = pop(&id);
         sum += waitingtime;
         cout << "P" << processindex <<": "<<waitingtime<<" ms"<<endl;
-        fprintf(output, "P %d: %f ms\n", processHeader->ID, wTime);
+        fprintf(output, "P %d: %f ms\n", processindex, wTime);
         count++;
     }
     avgWaitingTime = sum / count;
@@ -603,7 +606,7 @@ void showResult(string Method, string Mode,struct process* p, FILE* output)
     }
     else if(Method == "Round Robin" && Mode == "On")
     {
-        cout << "The round robin is working but when I run it in UBUNTU it gives underflow"<<endl;
+        RoundRobin(p,output);
     }
     else if(Method == "Round Robin" && Mode == "Off")
     {
