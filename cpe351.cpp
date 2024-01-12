@@ -1,7 +1,8 @@
 #include <iostream>
-#include <string>
+#include <fstream>
 #include <sstream>
 #define LINE_MAX 1024
+#define STACKSIZE 100
 using namespace std;
 
 struct process
@@ -10,7 +11,14 @@ struct process
     double burstTime;
     double arrivalTime;
     double priority;
+    double remainingTime;
     struct process* next;
+};
+
+struct stack
+{
+    int top;
+    int item[STACKSIZE];
 };
 
 double wTime = 0;
@@ -41,26 +49,28 @@ void readOutputFile(const char*);
 
 int main(int argc,char *argv[])
 {
+    // ./cpe351 –f input.txt –o output.txt
+    char* outputFileName = argv[4];
+    Out_put = outputFileName;
     if(argc!=5){
         cout << "Invalid number of arguments." << endl;
         return 1;
     }
 
-    FILE *input=fopen(argv[2],"r");
+    FILE *input = fopen(argv[2],"r");
     if(input == NULL)
     {
         cout << "Cannot open input.txt ." << endl;
         return 1;
     }
-
-    FILE *output=fopen(argv[4],"w");
+    FILE *output = fopen(argv[4],"w");
     if(output == NULL)
     {
         cout << "Cannot open output.txt ." << endl;
         fclose(input);
         return 1;
     }
-    
+
     struct process* p=NULL;
     char line[LINE_MAX];
     int x = size(p);
@@ -132,9 +142,13 @@ int main(int argc,char *argv[])
             case 3:
                 showResult(schMethod, preMode, p, output);
                 break;
+            case 4:
+                fclose(output);
+                readOutputFile(Out_put);
+                exit(0);
+                break;
         }
     }while(menu <= 4);
-
     return 0;
 }
 
@@ -190,6 +204,7 @@ void push(struct stack *ps, int x)
    if(stackFull(ps))
    {
        cout<<"Overflow"<<endl;
+       exit(1);
    }
    ps->top++;
    ps->item[ps->top]=x;
@@ -200,6 +215,7 @@ double pop(struct stack *ps)
    if(stackEmpty(ps))
    {
        cout<<"Underflow"<<endl;
+       exit(1);
    }
    return ps->item[(ps->top)--];
 }
@@ -286,7 +302,7 @@ struct process* sortArrivalTime(struct process* processHeader)
     return processHeader;
 }
 
-struct process* sortBurstTime(struct process* processHeader)
+struct process* sortBurstTime(struct process* processHeader) // This function sort the Header depends on burst time.
 {
     bool swapped;
     struct process* temp;
@@ -309,7 +325,7 @@ struct process* sortBurstTime(struct process* processHeader)
     return processHeader;
 }
 
-struct process* sortpriority(struct process* processHeader)
+struct process* sortpriority(struct process* processHeader) // This function sort the Header depends on apriority.
 {
     bool swapped;
     struct process* temp;
@@ -562,7 +578,7 @@ void RoundRobin(struct process *processHeader, FILE *output)
 
 void showResult(string Method, string Mode,struct process* p, FILE* output)
 {
-    if(Method == "FCFS" && Mode == "off")
+    if(Method == "FCFS" && Mode == "Off")
     {
         FCFS(p,output);
     }
@@ -576,20 +592,19 @@ void showResult(string Method, string Mode,struct process* p, FILE* output)
     }
     else if(Method == "SJF" && Mode == "On")
     {
-        cout << "This function is not implemented yet." << endl;
+        cout << "This function is not implemented yet.";
     }
     else if(Method == "Priority" && Mode == "Off")
-    {
+                {
         priority_NP(p,output);
     }
     else if(Method == "Priority" && Mode == "On")
     {
-        cout << "This function is not implemented yet." << endl;
+        cout << "This function is not implemented yet.";
     }
     else if(Method == "Round Robin" && Mode == "On")
     {
-        cout << "The Round Robin is working on normal compiler but when I run it in ubuntu it gives underflow and close the program"<<endl;
-        RoundRobin(p,output);
+        cout << "The round robin is working but when I run it in UBUNTU it gives underflow"<<endl;
     }
     else if(Method == "Round Robin" && Mode == "Off")
     {
