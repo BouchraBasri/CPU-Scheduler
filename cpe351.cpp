@@ -204,7 +204,6 @@ void push(struct stack *ps, int x)
    if(stackFull(ps))
    {
        cout<<"Overflow"<<endl;
-       exit(1);
    }
    ps->top++;
    ps->item[ps->top]=x;
@@ -215,7 +214,6 @@ double pop(struct stack *ps)
    if(stackEmpty(ps))
    {
        cout<<"Underflow"<<endl;
-       exit(1);
    }
    return ps->item[(ps->top)--];
 }
