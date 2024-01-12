@@ -15,9 +15,15 @@ struct process
 
 double wTime = 0;
 double avgWaitingTime = 0;
+char* Out_put;
 
 struct process* createProcess(int, double, double, double);
 struct process* insertProcess(struct process*, int, double, double, double);
+void initializeStack(struct stack*);
+int stackFull(struct stack*);
+int stackEmpty(struct stack*);
+void push(struct stack* , int );
+double pop(struct stack*);
 int MainMenu(string, string);
 int SchedulingMenu();
 int preemptive_mode();
@@ -29,6 +35,7 @@ void FCFS(struct process*, FILE*);
 void SJF_NP(struct process*, FILE*);
 void priority_NP(struct process*, FILE*);
 int size(struct process*);
+void RoundRobin(struct process*, FILE*);
 void showResult(string, string, struct process*, FILE*);
 void readOutputFile(const char*);
 
@@ -155,6 +162,46 @@ struct process* insertProcess(struct process* processHeader, int process_id, dou
         currentProcess = currentProcess->next;
     currentProcess->next = newProcess;
     return processHeader;
+}
+
+void initializeStack(struct stack* ps)
+{
+    ps->top = -1;
+}
+
+int stackFull(struct stack *ps)
+{
+    if(ps->top == STACKSIZE-1)
+        return 1;
+    else
+        return 0;
+}
+
+int stackEmpty(struct stack *ps)
+{
+    if(ps->top == -1)
+        return 1;
+    else
+        return 0;
+}
+
+void push(struct stack *ps, int x)
+{
+   if(stackFull(ps))
+   {
+       cout<<"Overflow"<<endl;
+   }
+   ps->top++;
+   ps->item[ps->top]=x;
+}
+
+double pop(struct stack *ps)
+{
+   if(stackEmpty(ps))
+   {
+       cout<<"Underflow"<<endl;
+   }
+   return ps->item[(ps->top)--];
 }
 
 int MainMenu(string schedulingMethod, string preemptiveMode)
@@ -448,6 +495,71 @@ int size(struct process *processHeader)
 	return x;	
 }
 
+void RoundRobin(struct process *processHeader, FILE *output)
+{
+    int quantum = 0;
+    double executionTime = 0;
+    double turn_around_time = 0;
+    struct stack w;
+    struct stack id;
+    initializeStack(&w);
+    initializeStack(&id);
+    int count =0;
+    double sum = 0;
+    int y;
+    y = size(processHeader);
+    processHeader = sortArrivalTime(processHeader);
+    cout<< "Choose quantum:" << endl;
+    cin >> quantum;
+    while (processHeader != NULL)
+    {
+        struct process *currentProcess = processHeader;
+        int process = 0; 
+
+        while (currentProcess != NULL)
+        {
+            if (currentProcess->remainingTime > 0)
+            {
+                process = 1;
+                if (currentProcess->remainingTime <= quantum)
+                {
+                    executionTime += currentProcess->remainingTime;
+                    currentProcess->remainingTime = 0;
+                }
+                else
+                {
+                    executionTime += quantum;
+                    currentProcess->remainingTime -= quantum;
+                }
+                turn_around_time = executionTime - currentProcess->arrivalTime;
+                wTime = turn_around_time - currentProcess->burstTime;
+                push(&w,wTime);
+                push(&id,currentProcess->ID);
+            }
+            currentProcess = currentProcess->next;
+        }
+        if (process == 0)
+        {
+            struct process *temp = processHeader;
+            processHeader = processHeader->next;
+        }
+    }
+    for(int i=0; i<y-1; i++)
+    {
+        double  waitingtime = 0;
+        int processindex = 0;
+        waitingtime = pop(&w);
+        processindex = pop(&id);
+        sum += waitingtime;
+        cout << "P" << processindex <<": "<<waitingtime<<" ms"<<endl;
+        fprintf(output, "P %d: %f ms\n", processHeader->ID, wTime);
+        count++;
+    }
+    avgWaitingTime = sum / count;
+    cout << "Average Waiting Time: " << avgWaitingTime <<" ms"<< endl;
+    fprintf(output, "Average Waiting Time: %f \n ", avgWaitingTime);
+}
+
 void showResult(string Method, string Mode,struct process* p, FILE* output)
 {
     if(Method == "FCFS" && Mode == "off")
@@ -467,7 +579,7 @@ void showResult(string Method, string Mode,struct process* p, FILE* output)
         cout << "This function is not implemented yet." << endl;
     }
     else if(Method == "Priority" && Mode == "Off")
-	{
+    {
         priority_NP(p,output);
     }
     else if(Method == "Priority" && Mode == "On")
@@ -476,11 +588,12 @@ void showResult(string Method, string Mode,struct process* p, FILE* output)
     }
     else if(Method == "Round Robin" && Mode == "On")
     {
-        cout << "This function is not implemented yet." << endl;
+        cout << "The Round Robin is working on normal compiler but when I run it in ubuntu it gives underflow and close the program"<<endl;
+        RoundRobin(p,output);
     }
     else if(Method == "Round Robin" && Mode == "Off")
     {
-        cout << "FCFS is a non preemptive method."<< endl;
+        cout << "Round Robin is a preemptive method."<< endl;
     }
     else if(Method == " " || Mode == " ")
     {
