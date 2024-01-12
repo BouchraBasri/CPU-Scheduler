@@ -159,6 +159,7 @@ struct process* createProcess(int processID, double bTime, double aTime, double 
     processHeader->burstTime = bTime;
     processHeader->arrivalTime = aTime;
     processHeader->priority = pTime;
+    processHeader->remainingTime = bTime;
     processHeader->next = NULL;
     return processHeader;
 }
